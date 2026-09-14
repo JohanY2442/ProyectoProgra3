@@ -1,0 +1,76 @@
+---
+title: "ProcesamientoDatos_ProyectoProgra3"
+format: html
+editor: visual
+---
+
+# Procesamiento de Datos de peliculas
+
+\# 1. Cargamos los datos
+
+```{r}
+library(tidyverse)
+df_sucia<- read_csv("wiki_movie_plots_deduped.csv")
+# Aqui vemos las dimensiones
+dim(df_sucia)
+# Vemos los primeros datos
+View(df_sucia) 
+
+
+```
+
+#2. Exploramos los datos
+
+```{r}
+colnames(df_sucia)
+colSums(is.na(df_sucia))
+```
+
+#3. Limpieza
+
+```{r}
+df_limpia <- df_sucia %>%
+  # 1. Eliminar filas idénticas
+  distinct() %>%
+  
+  # 2. Filtrar filas sin título o sin argumento
+  filter(!is.na(Title), Title != "", !is.na(Plot), Plot != "") %>%
+  
+  # 3. Limpiar espacios y pasar a minúsculas (Sintaxis corregida)
+  mutate(
+    Title = tolower(trimws(Title)),
+    Plot = tolower(trimws(Plot)),
+    Director = tolower(trimws(Director)),
+    Genre = tolower(trimws(Genre))
+  ) %>%
+  
+  # 4. Remover acentos y caracteres raros
+  mutate(
+    Title = iconv(Title, from = "UTF-8", to = "ASCII//TRANSLIT"),
+    Plot = iconv(Plot, from = "UTF-8", to = "ASCII//TRANSLIT")
+  ) %>%
+  
+  # 5. Evitar duplicados reales (Mismo título Y mismo año)
+  distinct(Title, `Release Year`, .keep_all = TRUE)
+
+# Estadísticas
+cat("Filas antes:", nrow(df_sucia), "\n")
+cat("Filas después:", nrow(df_limpia), "\n")
+cat("Filas eliminadas:", nrow(df_sucia) - nrow(df_limpia), "\n")
+```
+
+```{r}
+# Eliminar saltos de línea (\n y \r) dentro de los textos antes de guardar
+df_para_cpp <- df_limpia %>%
+  mutate(
+    Plot = gsub("[\r\n]", " ", Plot),
+    Director = gsub("[\r\n]", " ", Director)
+  )
+
+# Guardar usando la versión moderna de tidyverse
+write_csv(df_para_cpp, "movies_clean.csv", na = "")
+
+cat("\n✓ Archivo guardado: movies_clean.csv\n")
+cat("Películas listas para cargar en C++\n")
+cat("Dimensiones finales:", nrow(df_para_cpp), "filas x", ncol(df_para_cpp), "columnas\n")
+```

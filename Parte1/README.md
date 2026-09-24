@@ -20,6 +20,6 @@ Programación III — UTEC (2026-2)
 
 ## Archivos
 - main_progra3_oficial.cpp: este es el programa principal
-- ProcesamientoDatos.qmd: La limpieza de datos se hizo en R
+- ProcesamientoDatos_final.qmd: La limpieza de datos se hizo en R
 - CODIGO_EXPLICADO.md: documentación
 - movies_clean.csv: Esta es la base de datos limpia

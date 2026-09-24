@@ -14,8 +14,8 @@ Programación III — UTEC (2026-2)
 
 ## Base de Datos
 - Original: 34,886 películas
-- Procesada: 34,565 películas (duplicados y nulos removidos)
-- Preprocesamiento: R/RStudio (ProcesamientoDatos.qmd)
+- Procesada: 34,565 películas
+- Preprocesamiento: R/RStudio 
 
 
 ## Archivos

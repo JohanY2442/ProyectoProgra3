@@ -11,9 +11,9 @@
 
 using namespace std;
 
-// ========================================
+// ---------------------------------------
 // ESTRUCTURA DE PELÍCULA
-// ========================================
+// ---------------------------------------
 struct Movie {
     int year = 0;
     string title;
@@ -25,9 +25,9 @@ struct Movie {
     string plot;
 };
 
-// ========================================
+// ---------------------------------------
 // NODO DEL TRIE DE SUFIJOS
-// ========================================
+// ---------------------------------------
 struct TrieNode {
     map<char, TrieNode*> children;
     vector<int> movieIndices;  // Índices de películas que contienen este sufijo
@@ -271,9 +271,9 @@ private:
     }
 };
 
-// ========================================
+// ---------------------------------------
 // FUNCIONES AUXILIARES DEL MENÚ
-// ========================================
+// ---------------------------------------
 
 // Borrar la pantalla antes de mostrar el menú
 void limpiarPantalla() {
@@ -353,9 +353,9 @@ void marcarPelicula(const vector<int>& results, vector<int>& watchLaterMovies, v
     }
 }
 
-// ========================================
-// MAIN - INTERFAZ TERMINAL
-// ========================================
+// ---------------------------------------
+// MAIN - INTERFAZ 
+// ---------------------------------------
 int main() {
 #ifdef _WIN32
     int estadoConsola = system("chcp 65001 > nul");  // Activar UTF-8 en la consola de Windows

@@ -1,0 +1,102 @@
+---
+title: "ProcesamientoDatos_ProyectoProgra3"
+format: html
+editor: visual
+---
+
+# Procesamiento de Datos de peliculas
+
+## 1. Primero cargamos los datos
+
+```{r}
+library(tidyverse)
+df_sucia <- read_csv("wiki_movie_plots_deduped.csv")
+# Aqui vemos las dimensiones de la data
+dim(df_sucia)
+# Vemos los primeros datos
+head(df_sucia)
+```
+
+## 2. Exploramos los datos
+
+```{r}
+colnames(df_sucia)
+colSums(is.na(df_sucia))
+```
+
+## 3. Ahora viene la limpieza
+
+Guardamos todo en `df_limpia` para no tocar `df_sucia` por si algo sale mal.
+
+```{r}
+df_limpia <- df_sucia %>%
+  # 1. Eliminar filas identicas
+  distinct() %>%
+
+  # 2. Filtrar filas sin titulo o sin argumento
+  filter(!is.na(Title), Title != "", !is.na(Plot), Plot != "") %>%
+
+  # 3. Limpiar espacios y pasar a minusculas
+  # Primero se intento con solo tolower() pero dejaba espacios al inicio asi que agregamos trimws
+  mutate(
+    Title = tolower(trimws(Title)),
+    Plot = tolower(trimws(Plot)),
+    Director = tolower(trimws(Director)),
+    Cast = tolower(trimws(Cast)),
+    Genre = tolower(trimws(Genre))
+  ) %>%
+
+  # 4. Remover acentos y caracteres raros
+  # (al inicio solo lo hicimos con Title y Plot y Director/Cast se quedaban con tildes)
+  mutate(
+    Title = iconv(Title, from = "UTF-8", to = "ASCII//TRANSLIT"),
+    Plot = iconv(Plot, from = "UTF-8", to = "ASCII//TRANSLIT"),
+    Director = iconv(Director, from = "UTF-8", to = "ASCII//TRANSLIT"),
+    Cast = iconv(Cast, from = "UTF-8", to = "ASCII//TRANSLIT")
+  ) %>%
+
+  # 5. El Plot traia referencias de wikipedia tipo [1], [23], las quitamos
+  mutate(Plot = gsub("\\[[0-9]+\\]", "", Plot)) %>%
+
+  # 6. Evitar duplicados reales (mismo titulo y el mismo año)
+  distinct(Title, `Release Year`, .keep_all = TRUE)
+
+# Estadisticas
+cat("Filas antes:", nrow(df_sucia), "\n")
+cat("Filas después:", nrow(df_limpia), "\n")
+cat("Filas eliminadas:", nrow(df_sucia) - nrow(df_limpia), "\n")
+```
+
+## 4. Guardar el dataset
+
+Los saltos de linea dentro del texto rompen la lectura linea por linea en C++, asi que los cambiamos por espacios.
+
+```{r}
+df_para_cpp <- df_limpia %>%
+  mutate(
+    Plot = gsub("[\r\n]+", " ", Plot),
+    Director = gsub("[\r\n]+", " ", Director),
+    Cast = gsub("[\r\n]+", " ", Cast)
+  )
+
+write_csv(df_para_cpp, "movies_clean.csv", na = "")
+
+cat("Archivo guardado: movies_clean.csv\n")
+cat("Total de películas limpias: ", nrow(df_para_cpp), "\n")
+cat("(Pasamos de ", nrow(df_sucia), " a ", nrow(df_para_cpp), " después de limpiar)\n")
+```
+
+## 5. Revisamos el csv que se guardó
+
+Leemos el archivo y no `df_limpia`, para confirmar que quedó bien.
+
+```{r}
+df_check <- read_csv("movies_clean.csv", show_col_types = FALSE)
+
+dim(df_check)
+# Esto deberia dar 0
+sum(grepl("\\[[0-9]+\\]", df_check$Plot))
+head(df_check)
+```
+
+Listo para cargar en C++

@@ -65,6 +65,10 @@ El navegador se abre solo en `http://localhost:8080`.
 **Funciones:** búsqueda por palabra/frase/sub-palabra y por tag, resultados de 5 en 5
 ordenados por importancia, detalle con sinopsis completa, Like y Ver más tarde
 (se pueden quitar), y al inicio se muestran "Ver más tarde" y "Similares a tus Likes".
+Desde la barra superior se abren las listas completas de **Tus Likes** y
+**Ver más tarde**. Como el catálogo no tiene imágenes, cada película recibe un
+**póster generado** (inicial del título sobre un degradado de colores de la marca,
+siempre el mismo para la misma película), creado en `web/posters.js`.
 
 La versión de consola (`src/main.cpp`, target `PlataformaStreaming`) sigue disponible.
 
@@ -76,6 +80,7 @@ La versión de consola (`src/main.cpp`, target `PlataformaStreaming`) sigue disp
 | `GET /api/inicio` | Ver más tarde, recomendadas y likes |
 | `GET /api/buscar?q=&pagina=` | Búsqueda por texto |
 | `GET /api/tag?tipo=&valor=&pagina=` | Búsqueda por tag |
+| `GET /api/lista?tipo=likes\|vermastarde&todos=1` | Lista de Likes o Ver más tarde (el Like más reciente primero) |
 | `GET /api/pelicula?id=` | Detalle de una película |
 | `POST /api/like`, `/api/quitar-like` | Marcar o quitar Like |
 | `POST /api/vermastarde`, `/api/quitar-vermastarde` | Marcar o quitar Ver más tarde |
@@ -106,6 +111,7 @@ ProyectoProgra3/
 │   ├── index.html
 │   ├── style.css
 │   ├── app.js
+│   ├── posters.js              Pósters generados para cada película
 │   ├── logo.svg
 │   ├── img/
 │   └── fonts/
@@ -121,7 +127,7 @@ ProyectoProgra3/
 |---|---|---|---|
 | **Singleton** | `StreamingPlatform` | `StreamingPlatform.h/.cpp` | Una única instancia de la plataforma con la base de datos cargada en memoria. |
 | **Proxy** | `SearchCacheProxy` | `SearchProxy.h/.cpp` | Se interpone entre el usuario y el `SuffixTrie` (ambos implementan `ISearchEngine`) y guarda en caché las búsquedas repetidas. |
-| **Iterator** | `MovieIterator<T>` | `MovieIterator.h/.cpp` | Recorre los resultados de una búsqueda en páginas de 5 películas (siguiente/anterior). |
+| **Iterator** | `MovieIterator<T>` | `MovieIterator.h/.cpp` | Recorre en páginas de 5 películas los resultados de una búsqueda (siguiente/anterior) y las listas de Likes y Ver más tarde. |
 | **Observer** | `UserProfileSubject`, `RecommendationObserver`, `PersistenceObserver` | `UserObserver.h/.cpp` | Al dar Like o guardar una película, se notifica a los observadores: uno actualiza las recomendaciones y otro guarda en disco. |
 | **Builder** | `MovieBuilder` | `Movie.h` | Construye cada `Movie` campo por campo al leer una fila del CSV. |
 

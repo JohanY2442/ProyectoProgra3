@@ -8,6 +8,7 @@ let peliculaAbierta = null;  // id de la película del modal
 let numeroPeticion = 0;      // evita que una respuesta lenta pise a una más nueva
 
 const NOMBRES_TAG = { director: "Director", genre: "Género", cast: "Casting", origin: "Origen" };
+const NOMBRES_LISTA = { likes: "Tus Likes", vermastarde: "Ver más tarde" };
 const SUGERENCIAS = ["ghost ship", "space", "bar", "vampire", "love story", "detective"];
 
 // ---------- Utilidades ----------
@@ -106,9 +107,10 @@ async function buscar(tipo, valor, pagina = 1) {
   busquedaActual = { tipo, valor, pagina };
   const miPeticion = ++numeroPeticion;
 
-  const url = tipo === "texto"
-    ? `/api/buscar?q=${encodeURIComponent(valor)}&pagina=${pagina}`
-    : `/api/tag?tipo=${tipo}&valor=${encodeURIComponent(valor)}&pagina=${pagina}`;
+  let url;
+  if (tipo === "texto") url = `/api/buscar?q=${encodeURIComponent(valor)}&pagina=${pagina}`;
+  else if (tipo === "lista") url = `/api/lista?tipo=${valor}&todos=1`;  // "Ver todos": tablero completo
+  else url = `/api/tag?tipo=${tipo}&valor=${encodeURIComponent(valor)}&pagina=${pagina}`;
   let d;
   try {
     d = await api(url);
@@ -122,17 +124,27 @@ async function buscar(tipo, valor, pagina = 1) {
   $("vista-inicio").classList.add("oculto");
   $("vista-resultados").classList.remove("oculto");
 
-  const etiqueta = tipo === "texto" ? `“${valor}”` : `${NOMBRES_TAG[tipo]}: “${valor}”`;
-  $("titulo-resultados").textContent = `Resultados para ${etiqueta}`;
+  if (tipo === "lista") {
+    $("titulo-resultados").textContent = NOMBRES_LISTA[valor];
+  } else {
+    const etiqueta = tipo === "texto" ? `“${valor}”` : `${NOMBRES_TAG[tipo]}: “${valor}”`;
+    $("titulo-resultados").textContent = `Resultados para ${etiqueta}`;
+  }
   // Solo la búsqueda por texto usa el algoritmo de importancia; los tags salen en orden del catálogo
   const orden = tipo === "texto" ? "ordenadas por importancia" : "en orden del catálogo";
-  $("detalle-resultados").textContent = d.total
-    ? `${d.total.toLocaleString("es-PE")} películas · ${orden} · ${d.ms.toFixed(1)} ms`
-    : "";
+  if (tipo === "lista") {
+    $("detalle-resultados").textContent = d.total ? `${d.total} ${d.total === 1 ? "película" : "películas"}` : "";
+  } else {
+    $("detalle-resultados").textContent = d.total
+      ? `${d.total.toLocaleString("es-PE")} películas · ${orden} · ${d.ms.toFixed(1)} ms`
+      : "";
+  }
 
   const grilla = $("grilla-resultados");
   grilla.innerHTML = "";
-  if (!d.total) {
+  if (!d.total && tipo === "lista") {
+    grilla.innerHTML = `<div class="vacio" style="grid-column:1/-1">Esta lista está vacía.</div>`;
+  } else if (!d.total) {
     grilla.innerHTML = `<div class="vacio vacio-mascota" style="grid-column:1/-1">
       <img src="img/mascota_3d.svg" alt="">
       <p><strong>¡Ups!</strong> No se encontraron películas.<br>Prueba con otra palabra o parte de palabra.</p>
@@ -143,7 +155,7 @@ async function buscar(tipo, valor, pagina = 1) {
   }
 
   $("texto-pagina").textContent = d.total ? `Página ${d.pagina} de ${d.totalPaginas}` : "";
-  document.querySelector(".paginacion").classList.toggle("oculto", !d.total);
+  document.querySelector(".paginacion").classList.toggle("oculto", !d.total || tipo === "lista");
   $("btn-anterior").disabled = !d.hayAnterior;
   $("btn-siguiente").disabled = !d.haySiguiente;
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -195,6 +207,10 @@ function cerrarModal() {
   document.body.style.overflow = "";
   peliculaAbierta = null;
   if (!busquedaActual) cargarInicio();  // refrescar recomendaciones si estamos en inicio
+  else if (busquedaActual.tipo === "lista") {
+    // Si se quitó un Like o un guardado, la lista cambia: recargarla
+    buscar("lista", busquedaActual.valor, 1);
+  }
 }
 
 async function marcar(tipo) {
@@ -247,6 +263,8 @@ $("btn-anterior").addEventListener("click", () => {
   if (busquedaActual) buscar(busquedaActual.tipo, busquedaActual.valor, busquedaActual.pagina - 1);
 });
 $("ir-inicio").addEventListener("click", mostrarInicio);
+document.querySelectorAll(".ver-todos").forEach((b) =>
+  b.addEventListener("click", () => buscar("lista", b.dataset.lista, 1)));
 $("volver-inicio").addEventListener("click", mostrarInicio);
 $("btn-like").addEventListener("click", () => marcar("like"));
 $("btn-mas-tarde").addEventListener("click", () => marcar("mastarde"));

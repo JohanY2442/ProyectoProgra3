@@ -36,6 +36,8 @@ public:
 
     bool likeMovie(int movieId);
     bool watchLaterMovie(int movieId);
+    bool unlikeMovie(int movieId);
+    bool removeWatchLater(int movieId);
 
     const Movie& getMovie(int movieId) const;
     const vector<int>& getWatchLaterList() const;

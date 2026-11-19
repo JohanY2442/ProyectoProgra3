@@ -59,6 +59,14 @@ bool StreamingPlatform::watchLaterMovie(int movieId) {
     return userProfile_.addWatchLater(movieId);
 }
 
+bool StreamingPlatform::unlikeMovie(int movieId) {
+    return userProfile_.removeLike(movieId);
+}
+
+bool StreamingPlatform::removeWatchLater(int movieId) {
+    return userProfile_.removeWatchLater(movieId);
+}
+
 const Movie& StreamingPlatform::getMovie(int movieId) const {
     return trieEngine_.getMovieByIndex(movieId);
 }

@@ -11,6 +11,7 @@
 #include "third_party/httplib.h"
 #include "StreamingPlatform.h"
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <cstdlib>
@@ -204,6 +205,27 @@ int main() {
                     + ",\"recomendadas\":" + listaJson(app, app->getRecommendedList())
                     + ",\"likes\":" + listaJson(app, app->getLikedList()) + "}";
         enviarJson(res, body);
+    });
+
+    // Lista de Likes o Ver más tarde (Patrón Iterator).
+    // Con "todos" se devuelve en una sola página para mostrarla como tablero.
+    svr.Get("/api/lista", [&](const httplib::Request& req, httplib::Response& res) {
+        if (!verificarListo(res)) return;
+        string tipo = req.get_param_value("tipo");
+        lock_guard<mutex> lock(g_mtx);
+        vector<int> ids;
+        if (tipo == "likes") {
+            ids = app->getLikedList();
+            reverse(ids.begin(), ids.end());  // el Like más reciente primero
+        } else if (tipo == "vermastarde") {
+            ids = app->getWatchLaterList();
+        } else {
+            enviarJson(res, "{\"error\":\"lista invalida\"}", 400);
+            return;
+        }
+        size_t tamPagina = req.has_param("todos") ? max<size_t>(1, ids.size()) : 5;
+        MovieIterator<int> it(ids, tamPagina);
+        enviarJson(res, paginaJson(app, it, leerPagina(req), 0));
     });
 
     // Búsqueda por palabra, frase o sub-palabra

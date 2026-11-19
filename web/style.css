@@ -131,6 +131,9 @@ main { padding: 32px 48px 64px; }
 
 .fila { margin-top: 36px; }
 .fila h2 { font-size: 21px; margin-bottom: 14px; }
+.fila-cabecera { display: flex; align-items: baseline; justify-content: space-between; }
+.ver-todos { background: none; border: none; color: var(--tenue); font-size: 14px; font-weight: 600; cursor: pointer; }
+.ver-todos:hover { color: var(--texto); }
 .carrusel {
   display: flex; gap: 16px; overflow-x: auto; padding: 6px 4px 14px;
   scroll-snap-type: x mandatory;

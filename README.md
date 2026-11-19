@@ -3,7 +3,7 @@
 Programación III — UTEC (2026-2)
 
 Plataforma de búsqueda y recomendación de películas en C++20. Carga una base de
-datos de 34,565 películas, la indexa en un Trie de Sufijos y permite buscar por
+datos de 34,433 películas, la indexa en un Trie de Sufijos y permite buscar por
 título, sinopsis o tag, dar Like, guardar en "Ver más tarde" y recibir
 recomendaciones. Cuenta con una interfaz gráfica web y una versión de consola.
 
@@ -160,7 +160,7 @@ llegan al mismo tiempo. La página muestra el tiempo de cada búsqueda.
 ## Base de datos
 
 - Original: 34,886 películas.
-- Procesada: 34,565 películas (`movies_clean.csv`).
+- Procesada: 34,433 películas (`movies_clean.csv`).
 - Preprocesamiento: C++ (`Parte1/clean_movies.cpp`).
 
 ## Créditos y licencias de terceros

@@ -104,16 +104,3 @@ buscar por tag, ver recomendaciones, ver Likes y ver "Ver más tarde".
 - Procesada: 34,565 películas (`movies_clean.csv`).
 - Preprocesamiento: C++ (`Parte1/clean_movies.cpp`).
 a sub-palabras en cualquier posición del título
-
-## Base de Datos
-- Original: 34,886 películas
-- Procesada: 34,565 películas
-- Preprocesamiento: R/RStudio 
-
-
-## Archivos
-- main_progra3_oficial.cpp: este es el programa principal
-- ProcesamientoDatos_final.qmd: La limpieza de datos se hizo en R
-- CODIGO_EXPLICADO.md: documentación
-- movies_clean.csv: Esta es la base de datos limpia
-[README (2).md](https://github.com/user-attachments/files/35063253/README.2.md)

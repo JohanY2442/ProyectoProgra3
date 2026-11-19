@@ -2,7 +2,7 @@
 
 ## 1. ¿Qué hace el programa?
 
-Es una **plataforma de streaming en consola**. Al iniciar, carga las 34,565 películas de `movies_clean.csv` (limpiadas antes en R) y construye un **Trie de sufijos** con los títulos. Después muestra un menú que permite:
+Es una **plataforma de streaming en consola**. Al iniciar, carga las 34,565 películas de `movies_clean.csv` (limpiadas antes con clean_movies.cpp) y construye un **Trie de sufijos** con los títulos. Después muestra un menú que permite:
 
 - Buscar películas por una palabra, frase o **sub-palabra** del título. Por ejemplo, "bar" encuentra "**bar**ney oldfield's race for a life" y "the **bar**ber of seville".
 - Buscar por **director** y por **género**.

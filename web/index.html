@@ -3,115 +3,150 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
   <title>Chestream · Plataforma de Streaming</title>
   <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="cargando">
 
-  <!-- Pantalla de carga mientras los hilos construyen el árbol -->
-  <div id="carga" class="carga">
-    <div class="marca marca-grande"><img src="logo.svg" alt=""><span>CHES<b>TREAM</b></span></div>
-    <img class="mascota-carga" src="img/mascota_3d.svg" alt="">
-    <div class="carga-estado"><div class="spinner"></div><p id="carga-texto">Cargando…</p></div>
+  <!-- Pantalla de carga -->
+  <div id="carga" class="splash" role="status" aria-live="polite">
+    <div class="splash-halo" aria-hidden="true"></div>
+    <div class="splash-centro">
+      <img class="splash-logo" src="logo.svg" alt="">
+      <div class="wordmark wordmark-grande" aria-label="Chestream">CHES<b>TREAM</b></div>
+      <img class="splash-ches" src="img/mascota_3d.svg" alt="">
+      <div class="splash-estado">
+        <span class="splash-barra" aria-hidden="true"><i></i></span>
+        <span id="carga-texto">Cargando catálogo…</span>
+      </div>
+    </div>
   </div>
 
+  <!-- Barra superior -->
   <header class="barra">
-    <div class="marca" id="ir-inicio" title="Inicio"><img src="logo.svg" alt=""><span>CHES<b>TREAM</b></span></div>
+    <a class="marca" id="ir-inicio" href="#" aria-label="Ir al inicio">
+      <img src="logo.svg" alt="">
+      <span class="wordmark">CHES<b>TREAM</b></span>
+    </a>
 
-    <form id="form-busqueda" class="buscador" autocomplete="off">
-      <select id="tipo-busqueda" aria-label="Tipo de búsqueda">
+    <form id="form-busqueda" class="capsula" role="search" autocomplete="off">
+      <label class="visually-hidden" for="tipo-busqueda">Buscar en</label>
+      <select id="tipo-busqueda">
         <option value="texto">Título o sinopsis</option>
         <option value="director">Director</option>
         <option value="genre">Género</option>
         <option value="cast">Casting</option>
         <option value="origin">Origen</option>
       </select>
-      <input id="campo-busqueda" type="search" placeholder="Busca una palabra, frase o parte de palabra…">
-      <button type="submit" class="btn btn-rojo">Buscar</button>
+      <label class="visually-hidden" for="campo-busqueda">Búsqueda</label>
+      <input id="campo-busqueda" type="text" spellcheck="false"
+             placeholder="Busca una palabra, frase o parte de palabra">
+      <button type="button" class="limpiar oculto" id="btn-limpiar" aria-label="Limpiar búsqueda">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <kbd class="atajo" title="Atajo: / o Ctrl+K">/</kbd>
+      <button type="submit" class="btn-buscar">Buscar</button>
     </form>
 
-    <div id="info-carga" class="info-carga"></div>
+    <nav class="accesos" aria-label="Tus listas">
+      <button class="acceso" data-lista="likes" aria-label="Ver tus Likes">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-9.2-9A5 5 0 0 1 12 6a5 5 0 0 1 9.2 5c-2.2 4.6-9.2 9-9.2 9z"/></svg>
+        <span>Likes</span><span class="contador" id="contador-likes">0</span>
+      </button>
+      <button class="acceso" data-lista="vermastarde" aria-label="Ver tu lista Ver más tarde">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4.5L6 21z"/></svg>
+        <span>Ver más tarde</span><span class="contador" id="contador-tarde">0</span>
+      </button>
+      <span class="catalogo" id="info-carga" title="Películas en el catálogo"></span>
+    </nav>
   </header>
 
   <main>
-    <!-- Inicio: Ver más tarde + recomendaciones -->
+    <!-- Inicio -->
     <section id="vista-inicio">
       <div class="hero">
+        <img class="hero-ches" src="img/mascota_canchita.svg" alt="Ches, la mascota de Chestream">
         <div class="hero-texto">
-          <h1>¿Qué quieres ver hoy?</h1>
-          <p>Busca entre más de 34 mil películas por título, sinopsis, director, género o casting.</p>
+          <h1>¿Qué vemos hoy?</h1>
+          <p>Más de 34 mil películas. Busca por una palabra, una frase o solo una parte de ella.</p>
           <div class="sugerencias" id="sugerencias"></div>
         </div>
-        <!-- Ches, la mascota de Chestream -->
-        <img class="mascota" src="img/mascota_canchita.svg" alt="Ches, la mascota de Chestream, con canchita">
       </div>
 
-      <div class="fila">
-        <div class="fila-cabecera"><h2>Ver más tarde</h2><button class="ver-todos" data-lista="vermastarde">Ver todos →</button></div>
-        <div class="carrusel" id="fila-ver-mas-tarde"></div>
-      </div>
+      <section class="fila fila-recomendada" aria-labelledby="t-recom">
+        <div class="fila-cabecera">
+          <h2 id="t-recom">Similares a tus Likes</h2>
+          <span class="fila-nota" id="nota-recom"></span>
+        </div>
+        <div class="carril" id="fila-recomendadas"></div>
+      </section>
 
-      <div class="fila">
-        <h2>Similares a tus Likes</h2>
-        <div class="carrusel" id="fila-recomendadas"></div>
-      </div>
+      <section class="fila" aria-labelledby="t-tarde">
+        <div class="fila-cabecera">
+          <h2 id="t-tarde">Ver más tarde</h2>
+          <button class="ver-todos" data-lista="vermastarde">Ver todos</button>
+        </div>
+        <div class="carril" id="fila-ver-mas-tarde"></div>
+      </section>
 
-      <div class="fila">
-        <div class="fila-cabecera"><h2>Tus Likes</h2><button class="ver-todos" data-lista="likes">Ver todos →</button></div>
-        <div class="carrusel" id="fila-likes"></div>
-      </div>
+      <section class="fila" aria-labelledby="t-likes">
+        <div class="fila-cabecera">
+          <h2 id="t-likes">Tus Likes</h2>
+          <button class="ver-todos" data-lista="likes">Ver todos</button>
+        </div>
+        <div class="carril" id="fila-likes"></div>
+      </section>
     </section>
 
-    <!-- Resultados de búsqueda -->
-    <section id="vista-resultados" class="oculto">
+    <!-- Resultados / listas completas -->
+    <section id="vista-resultados" class="oculto" aria-live="polite">
       <div class="cabecera-resultados">
         <div>
           <h2 id="titulo-resultados">Resultados</h2>
-          <p id="detalle-resultados" class="tenue"></p>
+          <p class="conteo" id="conteo-resultados"></p>
         </div>
-        <button class="btn btn-gris" id="volver-inicio">← Volver al inicio</button>
+        <button class="btn-fantasma" id="volver-inicio">Volver al inicio</button>
       </div>
 
       <div class="grilla" id="grilla-resultados"></div>
 
-      <div class="paginacion">
-        <button class="btn btn-gris" id="btn-anterior">◀ Anteriores 5</button>
+      <nav class="paginacion" aria-label="Páginas de resultados">
+        <button class="pag-btn" id="btn-anterior" aria-label="Cinco anteriores (flecha izquierda)">‹ Anteriores</button>
         <span id="texto-pagina"></span>
-        <button class="btn btn-rojo" id="btn-siguiente">Siguientes 5 ▶</button>
-      </div>
+        <button class="pag-btn pag-sig" id="btn-siguiente" aria-label="Cinco siguientes (flecha derecha)">Siguientes ›</button>
+      </nav>
     </section>
   </main>
 
   <!-- Detalle de una película -->
-  <div id="modal" class="modal oculto">
+  <div id="modal" class="modal oculto" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
     <div class="modal-fondo" data-cerrar></div>
     <article class="modal-caja">
-      <button class="cerrar" data-cerrar aria-label="Cerrar">✕</button>
-      <div class="modal-poster" id="modal-poster">
-        <div class="modal-poster-texto">
-          <h2 id="modal-titulo"></h2>
-          <div class="chips" id="modal-chips"></div>
+      <button class="cerrar" data-cerrar aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="modal-izq">
+        <div class="modal-poster" id="modal-poster"></div>
+        <div class="modal-acciones">
+          <button class="btn-accion" id="btn-like" aria-pressed="false"></button>
+          <button class="btn-accion" id="btn-mas-tarde" aria-pressed="false"></button>
         </div>
       </div>
-      <div class="modal-cuerpo">
-        <div class="acciones">
-          <button class="btn btn-blanco" id="btn-like">♡ Like</button>
-          <button class="btn btn-gris" id="btn-mas-tarde">＋ Ver más tarde</button>
-          <a class="enlace-wiki" id="modal-wiki" target="_blank" rel="noopener">Wikipedia ↗</a>
-        </div>
-        <dl class="datos">
-          <dt>Director</dt><dd id="modal-director"></dd>
-          <dt>Casting</dt><dd id="modal-casting"></dd>
-        </dl>
-        <h3>Sinopsis</h3>
-        <p id="modal-sinopsis" class="sinopsis"></p>
+      <div class="modal-der">
+        <h2 id="modal-titulo"></h2>
+        <div class="modal-meta" id="modal-meta"></div>
+        <div class="modal-sinopsis" id="modal-sinopsis"></div>
+        <div class="creditos" id="modal-creditos"></div>
+        <a class="enlace-wiki" id="modal-wiki" target="_blank" rel="noopener">Leer en Wikipedia</a>
       </div>
     </article>
   </div>
 
-  <div id="toast" class="toast"></div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
 
+  <script src="posters.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -27,6 +27,8 @@ public:
 
     bool addLike(int movieId);
     bool addWatchLater(int movieId);
+    bool removeLike(int movieId);
+    bool removeWatchLater(int movieId);
     void setInitialData(const vector<int>& likes, const vector<int>& watchLater);
 
     const vector<int>& getLikedMovies() const { return likedMovies_; }

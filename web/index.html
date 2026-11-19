@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chestream · Plataforma de Streaming</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Pantalla de carga mientras los hilos construyen el árbol -->
+  <div id="carga" class="carga">
+    <div class="marca marca-grande"><img src="logo.svg" alt=""><span>CHES<b>TREAM</b></span></div>
+    <img class="mascota-carga" src="img/mascota_3d.svg" alt="">
+    <div class="carga-estado"><div class="spinner"></div><p id="carga-texto">Cargando…</p></div>
+  </div>
+
+  <header class="barra">
+    <div class="marca" id="ir-inicio" title="Inicio"><img src="logo.svg" alt=""><span>CHES<b>TREAM</b></span></div>
+
+    <form id="form-busqueda" class="buscador" autocomplete="off">
+      <select id="tipo-busqueda" aria-label="Tipo de búsqueda">
+        <option value="texto">Título o sinopsis</option>
+        <option value="director">Director</option>
+        <option value="genre">Género</option>
+        <option value="cast">Casting</option>
+        <option value="origin">Origen</option>
+      </select>
+      <input id="campo-busqueda" type="search" placeholder="Busca una palabra, frase o parte de palabra…">
+      <button type="submit" class="btn btn-rojo">Buscar</button>
+    </form>
+
+    <div id="info-carga" class="info-carga"></div>
+  </header>
+
+  <main>
+    <!-- Inicio: Ver más tarde + recomendaciones -->
+    <section id="vista-inicio">
+      <div class="hero">
+        <div class="hero-texto">
+          <h1>¿Qué quieres ver hoy?</h1>
+          <p>Busca entre más de 34 mil películas por título, sinopsis, director, género o casting.</p>
+          <div class="sugerencias" id="sugerencias"></div>
+        </div>
+        <!-- Ches, la mascota de Chestream -->
+        <img class="mascota" src="img/mascota_canchita.svg" alt="Ches, la mascota de Chestream, con canchita">
+      </div>
+
+      <div class="fila">
+        <h2>Ver más tarde</h2>
+        <div class="carrusel" id="fila-ver-mas-tarde"></div>
+      </div>
+
+      <div class="fila">
+        <h2>Similares a tus Likes</h2>
+        <div class="carrusel" id="fila-recomendadas"></div>
+      </div>
+
+      <div class="fila">
+        <h2>Tus Likes</h2>
+        <div class="carrusel" id="fila-likes"></div>
+      </div>
+    </section>
+
+    <!-- Resultados de búsqueda -->
+    <section id="vista-resultados" class="oculto">
+      <div class="cabecera-resultados">
+        <div>
+          <h2 id="titulo-resultados">Resultados</h2>
+          <p id="detalle-resultados" class="tenue"></p>
+        </div>
+        <button class="btn btn-gris" id="volver-inicio">← Volver al inicio</button>
+      </div>
+
+      <div class="grilla" id="grilla-resultados"></div>
+
+      <div class="paginacion">
+        <button class="btn btn-gris" id="btn-anterior">◀ Anteriores 5</button>
+        <span id="texto-pagina"></span>
+        <button class="btn btn-rojo" id="btn-siguiente">Siguientes 5 ▶</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Detalle de una película -->
+  <div id="modal" class="modal oculto">
+    <div class="modal-fondo" data-cerrar></div>
+    <article class="modal-caja">
+      <button class="cerrar" data-cerrar aria-label="Cerrar">✕</button>
+      <div class="modal-poster" id="modal-poster">
+        <div class="modal-poster-texto">
+          <h2 id="modal-titulo"></h2>
+          <div class="chips" id="modal-chips"></div>
+        </div>
+      </div>
+      <div class="modal-cuerpo">
+        <div class="acciones">
+          <button class="btn btn-blanco" id="btn-like">♡ Like</button>
+          <button class="btn btn-gris" id="btn-mas-tarde">＋ Ver más tarde</button>
+          <a class="enlace-wiki" id="modal-wiki" target="_blank" rel="noopener">Wikipedia ↗</a>
+        </div>
+        <dl class="datos">
+          <dt>Director</dt><dd id="modal-director"></dd>
+          <dt>Casting</dt><dd id="modal-casting"></dd>
+        </dl>
+        <h3>Sinopsis</h3>
+        <p id="modal-sinopsis" class="sinopsis"></p>
+      </div>
+    </article>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -35,6 +35,24 @@ bool UserProfileSubject::addWatchLater(int movieId) {
     return true;
 }
 
+// Quita un Like y notifica (se recalculan recomendaciones y se guarda en disco)
+bool UserProfileSubject::removeLike(int movieId) {
+    auto it = find(likedMovies_.begin(), likedMovies_.end(), movieId);
+    if (it == likedMovies_.end()) return false;
+    likedMovies_.erase(it);
+    notificarObservadores();
+    return true;
+}
+
+// Quita una película de Ver más tarde y notifica
+bool UserProfileSubject::removeWatchLater(int movieId) {
+    auto it = find(watchLaterMovies_.begin(), watchLaterMovies_.end(), movieId);
+    if (it == watchLaterMovies_.end()) return false;
+    watchLaterMovies_.erase(it);
+    notificarObservadores();
+    return true;
+}
+
 void UserProfileSubject::setInitialData(const vector<int>& likes, const vector<int>& watchLater) {
     likedMovies_ = likes;
     watchLaterMovies_ = watchLater;

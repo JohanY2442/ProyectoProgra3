@@ -1,0 +1,4 @@
+user_data.txt
+*.exe
+build/
+cmake-build-*/

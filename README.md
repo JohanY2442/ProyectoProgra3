@@ -103,4 +103,3 @@ buscar por tag, ver recomendaciones, ver Likes y ver "Ver más tarde".
 - Original: 34,886 películas.
 - Procesada: 34,565 películas (`movies_clean.csv`).
 - Preprocesamiento: C++ (`Parte1/clean_movies.cpp`).
-a sub-palabras en cualquier posición del título
